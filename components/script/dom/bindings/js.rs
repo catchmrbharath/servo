@@ -533,7 +533,7 @@ impl<'b, 'a: 'b, T: Reflectable> Drop for Root<'a, 'b, T> {
 }*/
 
 impl<'b, 'a: 'b, T: Reflectable> Root<'a, 'b, T> {
-    pub fn r(&self) -> JSRef<'b, T> {
+    pub fn r<'c>(&'c self) -> JSRef<'c, T> {
         self.jsref
     }
 }

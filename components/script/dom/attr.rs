@@ -151,8 +151,8 @@ impl<'a> AttrMethods for JSRef<'a, Attr> {
             }
             Some(o) => {
                 let owner = o.root();
-                let value = owner.parse_attribute(&self.namespace, self.local_name(), value);
-                self.set_value(AttrSettingType::ReplacedAttr, value, *owner);
+                let value = owner.r().parse_attribute(&self.namespace, self.local_name(), value);
+                self.set_value(AttrSettingType::ReplacedAttr, value, owner.r());
             }
         }
     }
@@ -207,7 +207,7 @@ pub trait AttrHelpers<'a> {
 
 impl<'a> AttrHelpers<'a> for JSRef<'a, Attr> {
     fn set_value(self, set_type: AttrSettingType, value: AttrValue, owner: JSRef<Element>) {
-        assert!(Some(owner) == self.owner.map(|o| *o.root()));
+        assert!(Some(owner) == self.owner.map(|o| o.root().r()));
 
         let node: JSRef<Node> = NodeCast::from_ref(owner);
         let namespace_is_null = self.namespace == ns!("");

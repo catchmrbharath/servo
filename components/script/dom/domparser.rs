@@ -47,7 +47,7 @@ impl<'a> DOMParserMethods for JSRef<'a, DOMParser> {
                        s: DOMString,
                        ty: DOMParserBinding::SupportedType)
                        -> Fallible<Temporary<Document>> {
-        let window = self.window.root().clone();
+        let window = self.window.root().r();
         let url = window.get_url();
         let content_type = DOMParserBinding::SupportedTypeValues::strings[ty as uint].into_string();
         match ty {
@@ -55,7 +55,7 @@ impl<'a> DOMParserMethods for JSRef<'a, DOMParser> {
                 let document = Document::new(window, Some(url.clone()),
                                              IsHTMLDocument::HTMLDocument,
                                              Some(content_type),
-                                             DocumentSource::FromParser).root().clone();
+                                             DocumentSource::FromParser).root().r();
                 parse_html(document, HTMLInput::InputString(s), &url);
                 document.set_ready_state(DocumentReadyState::Complete);
                 Ok(Temporary::from_rooted(document))

@@ -87,12 +87,12 @@ impl<'a> HTMLIFrameElementHelpers for JSRef<'a, HTMLIFrameElement> {
     fn get_url(self) -> Option<Url> {
         let element: JSRef<Element> = ElementCast::from_ref(self);
         element.get_attribute(ns!(""), &atom!("src")).root().and_then(|src| {
-            let url = src.value();
+            let url = src.r().value();
             if url.as_slice().is_empty() {
                 None
             } else {
                 let window = window_from_node(self).root();
-                UrlParser::new().base_url(&window.page().get_url())
+                UrlParser::new().base_url(&window.r().page().get_url())
                     .parse(url.as_slice()).ok()
             }
         })
@@ -112,7 +112,7 @@ impl<'a> HTMLIFrameElementHelpers for JSRef<'a, HTMLIFrameElement> {
 
         // Subpage Id
         let window = window_from_node(self).root();
-        let page = window.page();
+        let page = window.r().page();
         let subpage_id = page.get_next_subpage_id();
 
         self.size.set(Some(IFrameSize {
@@ -170,7 +170,7 @@ impl<'a> HTMLIFrameElementMethods for JSRef<'a, HTMLIFrameElement> {
     fn GetContentWindow(self) -> Option<Temporary<Window>> {
         self.size.get().and_then(|size| {
             let window = window_from_node(self).root();
-            let children = window.page().children.borrow();
+            let children = window.r().page().children.borrow();
             let child = children.iter().find(|child| {
                 child.subpage_id.unwrap() == size.subpage_id
             });
@@ -188,10 +188,10 @@ impl<'a> HTMLIFrameElementMethods for JSRef<'a, HTMLIFrameElement> {
                 Some(self_url) => self_url,
                 None => return None,
             };
-            let win_url = window_from_node(self).root().page().get_url();
+            let win_url = window_from_node(self).root().r().page().get_url();
 
             if UrlHelper::SameOrigin(&self_url, &win_url) {
-                Some(window.Document())
+                Some(window.r().Document())
             } else {
                 None
             }

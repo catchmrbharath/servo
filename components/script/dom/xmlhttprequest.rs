@@ -201,7 +201,7 @@ impl XMLHttpRequest {
 
     pub fn handle_progress(addr: TrustedXHRAddress, progress: XHRProgress) {
         let xhr = addr.to_temporary().root();
-        xhr.process_partial_response(progress);
+        xhr.r().process_partial_response(progress);
     }
 
     fn fetch(fetch_type: &SyncOrAsync, resource_task: ResourceTask,
@@ -510,7 +510,7 @@ impl<'a> XMLHttpRequestMethods for JSRef<'a, XMLHttpRequest> {
 
         if !self.sync.get() {
             // Step 8
-            let upload_target = *self.upload.root();
+            let upload_target = self.upload.root().r();
             let event_target: JSRef<EventTarget> = EventTargetCast::from_ref(upload_target);
             if event_target.has_handlers() {
                 self.upload_events.set(true);
@@ -769,7 +769,7 @@ impl<'a> PrivateXMLHttpRequestHelpers for JSRef<'a, XMLHttpRequest> {
                                EventBubbles::DoesNotBubble,
                                EventCancelable::Cancelable).root();
         let target: JSRef<EventTarget> = EventTargetCast::from_ref(self);
-        target.dispatch_event(*event);
+        target.dispatch_event(event.r());
     }
 
     fn process_partial_response(self, progress: XHRProgress) {
@@ -898,7 +898,7 @@ impl<'a> PrivateXMLHttpRequestHelpers for JSRef<'a, XMLHttpRequest> {
 
     fn dispatch_progress_event(self, upload: bool, type_: DOMString, loaded: u64, total: Option<u64>) {
         let global = self.global.root();
-        let upload_target = *self.upload.root();
+        let upload_target = self.upload.root().r();
         let progressevent = ProgressEvent::new(global.root_ref(),
                                                type_, false, false,
                                                total.is_some(), loaded,
@@ -908,7 +908,7 @@ impl<'a> PrivateXMLHttpRequestHelpers for JSRef<'a, XMLHttpRequest> {
         } else {
             EventTargetCast::from_ref(self)
         };
-        let event: JSRef<Event> = EventCast::from_ref(*progressevent);
+        let event: JSRef<Event> = EventCast::from_ref(progressevent.r());
         target.dispatch_event(event);
     }
 
@@ -1008,7 +1008,7 @@ impl Extractable for SendParam {
         let encoding = UTF_8 as EncodingRef;
         match *self {
             eString(ref s) => encoding.encode(s.as_slice(), EncoderTrap::Replace).unwrap(),
-            eURLSearchParams(ref usp) => usp.root().serialize(None) // Default encoding is UTF8
+            eURLSearchParams(ref usp) => usp.root().r().serialize(None) // Default encoding is UTF8
         }
     }
 }

@@ -51,12 +51,12 @@ impl<'a> StyleElementHelpers for JSRef<'a, HTMLStyleElement> {
         assert!(node.is_in_doc());
 
         let win = window_from_node(node).root();
-        let url = win.page().get_url();
+        let url = win.r().page().get_url();
 
         let data = node.GetTextContent().expect("Element.textContent must be a string");
         let sheet = Stylesheet::from_str(data.as_slice(), url,
                                          StylesheetOrigin::Author);
-        let LayoutChan(ref layout_chan) = win.page().layout_chan;
+        let LayoutChan(ref layout_chan) = win.r().page().layout_chan;
         layout_chan.send(Msg::AddStylesheet(sheet));
     }
 }

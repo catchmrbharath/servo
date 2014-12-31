@@ -51,12 +51,12 @@ impl URLSearchParams {
             },
             Some(eURLSearchParams(u)) => {
                 let u = u.root();
-                let mut map = usp.data.borrow_mut();
-                *map = u.data.borrow().clone();
+                let mut map = usp.r().data.borrow_mut();
+                *map = u.r().data.borrow().clone();
             },
             None => {}
         }
-        Ok(Temporary::from_rooted(*usp))
+        Ok(Temporary::from_rooted(usp.r()))
     }
 }
 

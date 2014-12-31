@@ -525,9 +525,16 @@ impl<'b, 'a: 'b, T: Reflectable> Drop for Root<'a, 'b, T> {
     }
 }
 
-impl<'b, 'a: 'b, T: Reflectable> Deref<JSRef<'b, T>> for Root<'a, 'b, T> {
+/*impl<'b, 'a: 'b, T: Reflectable> Deref<JSRef<'b, T>> for Root<'a, 'b, T> {
+    #[deprecated]
     fn deref<'c>(&'c self) -> &'c JSRef<'b, T> {
         &self.jsref
+    }
+}*/
+
+impl<'b, 'a: 'b, T: Reflectable> Root<'a, 'b, T> {
+    pub fn r(&self) -> JSRef<'b, T> {
+        self.jsref
     }
 }
 

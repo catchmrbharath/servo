@@ -42,6 +42,7 @@ impl URLSearchParams {
 
     pub fn Constructor(global: &GlobalRef, init: Option<StringOrURLSearchParams>) -> Fallible<Temporary<URLSearchParams>> {
         let usp = URLSearchParams::new(*global).root();
+        let usp = usp.r();
         match init {
             Some(eString(_s)) => {
                 // XXXManishearth we need to parse the input here
@@ -51,12 +52,12 @@ impl URLSearchParams {
             },
             Some(eURLSearchParams(u)) => {
                 let u = u.root();
-                let mut map = usp.r().data.borrow_mut();
+                let mut map = usp.data.borrow_mut();
                 *map = u.r().data.borrow().clone();
             },
             None => {}
         }
-        Ok(Temporary::from_rooted(usp.r()))
+        Ok(Temporary::from_rooted(usp))
     }
 }
 

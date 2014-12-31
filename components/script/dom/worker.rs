@@ -83,8 +83,9 @@ impl Worker {
     pub fn handle_message(address: TrustedWorkerAddress,
                           data: *mut u64, nbytes: size_t) {
         let worker = address.to_temporary().root();
+        let worker = worker.r();
 
-        let global = worker.r().global.root();
+        let global = worker.global.root();
 
         let mut message = UndefinedValue();
         unsafe {
@@ -94,7 +95,7 @@ impl Worker {
                 ptr::null(), ptr::null_mut()) != 0);
         }
 
-        let target: JSRef<EventTarget> = EventTargetCast::from_ref(worker.r());
+        let target: JSRef<EventTarget> = EventTargetCast::from_ref(worker);
         MessageEvent::dispatch_jsval(target, global.root_ref(), message);
     }
 }

@@ -112,7 +112,8 @@ impl<'a> HTMLIFrameElementHelpers for JSRef<'a, HTMLIFrameElement> {
 
         // Subpage Id
         let window = window_from_node(self).root();
-        let page = window.r().page();
+        let window = window.r();
+        let page = window.page();
         let subpage_id = page.get_next_subpage_id();
 
         self.size.set(Some(IFrameSize {
@@ -170,7 +171,8 @@ impl<'a> HTMLIFrameElementMethods for JSRef<'a, HTMLIFrameElement> {
     fn GetContentWindow(self) -> Option<Temporary<Window>> {
         self.size.get().and_then(|size| {
             let window = window_from_node(self).root();
-            let children = window.r().page().children.borrow();
+            let window = window.r();
+            let children = window.page().children.borrow();
             let child = children.iter().find(|child| {
                 child.subpage_id.unwrap() == size.subpage_id
             });

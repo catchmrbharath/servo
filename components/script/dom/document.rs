@@ -220,7 +220,8 @@ impl<'a> DocumentHelpers<'a> for JSRef<'a, Document> {
         match mode {
             Quirks => {
                 let window = self.window.root();
-                let LayoutChan(ref layout_chan) = window.r().page().layout_chan;
+                let window = window.r();
+                let LayoutChan(ref layout_chan) = window.page().layout_chan;
                 layout_chan.send(Msg::SetQuirksMode);
             }
             NoQuirks | LimitedQuirks => {}
